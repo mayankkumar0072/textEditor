@@ -1,5 +1,5 @@
-# textEditor
-textEditor using React &amp; nodejs
+# TextEditor
+TextEditor using React, Mongo &amp; Nodejs
 
 # Setup
 
@@ -9,6 +9,6 @@ npm install
 
 npm start
 
-# Open In browser
+# Open In Browser
 
 http://localhost:3000/

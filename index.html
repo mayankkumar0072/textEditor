@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Text</title>
+    <style>
+        #container { width: 600px; }
+    </style>
+</head>
+<body>
+<span id="message"></span>
+<div id="container"></div>
+<script src="../../../node_modules/react/dist/react.js"></script>
+<script src="../../../node_modules/react-dom/dist/react-dom.js"></script>
+<script src="../../../node_modules/immutable/dist/immutable.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.js"></script>
+<script src="./dist/Draft.js"></script>
+<script type="text/babel">
+
+    'use strict';
+    let keystoppedTimer = null;
+    let arr = [];
+    class TextEditor extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {value: ''};
+            this.onChange = (evt) => this.setState({value: evt.target.value});
+        }
+        render() {
+                return <textarea id = "text" rows="20" cols="100" value={this.state.value} onChange={this.onChange} onKeyUp={this.textStopping}/>;
+        }
+
+        textStopping(evt){
+            let text = evt.target.value;
+            console.log("Received : " , arr);
+            clearTimeout(keystoppedTimer);
+            keystoppedTimer = setTimeout(function() {
+                arr.push(text);
+                send(arr);
+            }, 600);
+        }
+
+
+    }
+
+    ReactDOM.render(
+            <TextEditor />,
+        document.getElementById('container')
+    );
+
+    function diff(data){
+        var updatedText = data [0];
+        if(data.length > 1){
+            updatedText = data[1].split(data[0])[1];
+            data.shift();
+        }
+        return updatedText;
+    }
+
+    function send(data){
+        var dif = diff(data);
+        document.getElementById("message").innerHTML = "";
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("message").innerHTML = this.responseText;
+            }
+        };
+        xhttp.open("GET", `/save?text=${dif}`, true);
+        xhttp.send();
+    }
+
+</script>
+</body>
+</html>
